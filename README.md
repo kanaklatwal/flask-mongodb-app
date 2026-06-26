@@ -3,7 +3,7 @@
 ## Project Overview
 
 This project demonstrates how to deploy a Python Flask application with MongoDB on a Kubernetes cluster using Minikube.
-
+The deployment was verified using Kubernetes resources, browser testing, and Horizontal Pod Autoscaler (HPA) metrics.
 The Flask application provides two REST endpoints:
 
 * **/** – Displays a welcome message with the current date and time.
@@ -193,13 +193,32 @@ kubectl get all
 
 ### Autoscaling
 
-The Horizontal Pod Autoscaler was created successfully.
+The Horizontal Pod Autoscaler (HPA) was successfully configured and verified.
 
-Verification:
+Verification commands:
 
 ```bash
 kubectl get hpa
+kubectl top pods
 ```
+
+HPA Configuration:
+
+- Minimum Replicas: 2
+- Maximum Replicas: 5
+- Target CPU Utilization: 70%
+
+Metrics collected during testing:
+
+| Pod | CPU | Memory |
+|-----|-----|--------|
+| Flask Pod 1 | 1m | 24Mi |
+| Flask Pod 2 | 1m | 24Mi |
+| MongoDB Pod | 15m | 389Mi |
+
+The Metrics Server was enabled successfully, allowing CPU and memory usage to be monitored using `kubectl top pods`.
+
+See the screenshots in the `screenshots/` folder for verification.
 
 The HPA was configured with:
 
@@ -254,6 +273,8 @@ kubectl get svc
 kubectl get hpa
 
 minikube service flask-service --url
+
+kubectl top pods
 ```
 
 ---
@@ -265,5 +286,18 @@ The application was successfully deployed on a Minikube Kubernetes cluster.
 * Flask Deployment: Running (2/2)
 * MongoDB StatefulSet: Running (1/1)
 * Services: Running
-* Horizontal Pod Autoscaler: Created
+* Horizontal Pod Autoscaler: Successfully Configured and Verified
+  Metrics Server: Enabled
+  CPU and Memory Metrics: Verified using kubectl top pods
 * Application accessible through browser using the Minikube service URL.
+
+# Screenshots
+
+The following screenshots are included in the `screenshots/` folder:
+
+| Screenshot | Description |
+|------------|-------------|
+| flask-home.png | Flask application running in the browser |
+| kubectl-get-all.png | Verification of deployed Kubernetes resources |
+| hpa.png | Horizontal Pod Autoscaler configuration |
+| data-test.png | CPU and memory metrics collected using `kubectl top pods` |
